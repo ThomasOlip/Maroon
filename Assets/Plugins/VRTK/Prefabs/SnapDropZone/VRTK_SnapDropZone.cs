@@ -1,4 +1,7 @@
 ﻿// Snap Drop Zone|Prefabs|0080
+
+using UnityEngine.Events;
+
 namespace VRTK
 {
     using UnityEngine;
@@ -104,6 +107,8 @@ namespace VRTK
         /// Emitted when an interactable object is removed from a snapped drop zone.
         /// </summary>
         public event SnapDropZoneEventHandler ObjectUnsnappedFromDropZone;
+
+        public UnityEvent OnCreatedNewClone;
 
         protected GameObject previousPrefab;
         protected GameObject highlightContainer;
@@ -796,6 +801,8 @@ namespace VRTK
             if (cloneNewOnUnsnap)
             {
                 ResnapPermanentClone();
+                
+                OnCreatedNewClone.Invoke();
             }
 
             if (checkCanSnapRoutine != null)

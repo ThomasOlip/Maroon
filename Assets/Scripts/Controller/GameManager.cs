@@ -11,7 +11,9 @@ using Localization;
 public class GameManager : MonoBehaviour
 {
     [HideInInspector]
-    public static GameManager Instance = null; 
+    public static GameManager Instance = null;
+
+    public bool MenuEnabled = true;
 
     [SerializeField]
     private string _mlgFile;
@@ -110,7 +112,7 @@ public class GameManager : MonoBehaviour
         }            
 
         var activeScene = SceneManager.GetActiveScene().name;
-        if (Input.GetKeyDown(KeyCode.Escape) && activeScene != "Menu")
+        if (MenuEnabled && Input.GetKeyDown(KeyCode.Escape) && activeScene != "Menu")
         {
             _scene = activeScene;
             PlayMenuSound();

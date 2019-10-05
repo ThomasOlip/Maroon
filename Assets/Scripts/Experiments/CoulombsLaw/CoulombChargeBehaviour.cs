@@ -18,7 +18,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
     [Header("Movement Settings")]
     public bool pauseSimulationWhileMoving = true;
     public bool deleteIfOutsideBoundaries = true;
-
+    
     private int _currentCharge = -1; // -1 = electron, 0 = neutron, 1 = proton -> needed to adapt the material during runtime
 //    private bool _inUse = false;
 
@@ -52,8 +52,8 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
 
     private void Update()
     {
-        //PC Only?
-        _rigidbody.isKinematic = !_simController.SimulationRunning || fixedPosition;
+        //TODO: PC Only?
+//        _rigidbody.isKinematic = !_simController.SimulationRunning || fixedPosition;
     }
 
     private void ChangeParticleType()
@@ -87,7 +87,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
         _currentCharge = this.charge < 0 ? -1 : this.charge > 0 ? 1 : 0;
         ChangeParticleType();
     }
-
+    
     public void SetFixedPosition(bool isPositionFixed)
     {
         fixedPosition = isPositionFixed;

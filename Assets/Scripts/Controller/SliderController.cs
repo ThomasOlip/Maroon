@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Localization;
 using UnityEngine;
+using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.UI;
 using VRTK;
 using VRTK.UnityEventHelper;
@@ -30,9 +32,6 @@ public class SliderController : VRTK_Slider, IResetObject
 
     private void Start()
     {
-        startPos = transform.position;
-        startRot = transform.rotation;
-
         controlEvents = GetComponent<VRTK_Control_UnityEvents>();
         if (controlEvents == null)
         {
@@ -42,6 +41,11 @@ public class SliderController : VRTK_Slider, IResetObject
         UpdateValueText();
 
         controlEvents.OnValueChanged.AddListener(HandleChange);
+        
+        startPos = transform.position;
+        startRot = transform.rotation;
+        
+        Debug.Log("Value: " + value);
     }
 
     protected override ControlValueRange RegisterValueRange()
@@ -51,6 +55,8 @@ public class SliderController : VRTK_Slider, IResetObject
             minimumValue = 0;
             maximumValue = _optionKeys.Count - 1;
         }
+        
+        Debug.Log("Control Value Range: Max: " + maximumValue + " - " + minimumValue);
 
         return new ControlValueRange()
         {
@@ -58,7 +64,7 @@ public class SliderController : VRTK_Slider, IResetObject
             controlMax = maximumValue
         };
     }
-
+    
     private void UpdateValueText()
     {
         if(ValueText == null)
@@ -70,6 +76,9 @@ public class SliderController : VRTK_Slider, IResetObject
             ValueText.text = ((int)GetValue()).ToString();
         else
             ValueText.text = GetValue().ToString("0.00");
+        
+        Debug.Log("Update Value Text " + ValueText.text);
+
     }
 
     private void HandleChange(object sender, Control3DEventArgs e)

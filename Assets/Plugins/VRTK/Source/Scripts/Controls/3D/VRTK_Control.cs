@@ -76,7 +76,7 @@ namespace VRTK
         protected bool setupSuccessful = true;
         protected VRTK_ControllerRigidbodyActivator autoTriggerVolume;
 
-        protected float value;
+        public float value;
         protected static Color COLOR_OK = Color.yellow;
         protected static Color COLOR_ERROR = new Color(1, 0, 0, 0.9f);
         protected const float MIN_OPENING_DISTANCE = 20f; // percentage how far open something needs to be in order to activate it

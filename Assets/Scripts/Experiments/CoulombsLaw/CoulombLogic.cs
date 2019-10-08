@@ -176,7 +176,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     }
 
 
-    public void AddParticle(CoulombChargeBehaviour coulombCharge)
+    public void AddParticle(CoulombChargeBehaviour coulombCharge, bool deactivateCollisions = true)
     {
         if(_charges.Count >= maxChargeCount) return;
         
@@ -185,20 +185,29 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _charges.Add(coulombCharge);
         _chargesGameObjects.Add(coulombCharge.gameObject);
 
-        foreach (var collider in coulombCharge.gameObject.GetComponents<Collider>())
+        if (deactivateCollisions)
         {
-            Physics.IgnoreCollision(collider, _vectorField3d.gameObject.GetComponent<Collider>());
+            foreach (var collider in coulombCharge.gameObject.GetComponents<Collider>())
+            {
+                Physics.IgnoreCollision(collider, _vectorField3d.gameObject.GetComponent<Collider>());
             Physics.IgnoreCollision(collider, _vectorField2d.gameObject.GetComponent<Collider>());
+            }
+
+            foreach (var collider in coulombCharge.gameObject.GetComponentsInChildren<Collider>())
+            {
+                Physics.IgnoreCollision(collider, _vectorField3d.gameObject.GetComponent<Collider>());
+                Physics.IgnoreCollision(collider, _vectorField2d.gameObject.GetComponent<Collider>());
+            }
         }
-        foreach (var collider in coulombCharge.gameObject.GetComponentsInChildren<Collider>())
-        {
-            Physics.IgnoreCollision(collider, _vectorField3d.gameObject.GetComponent<Collider>());
-            Physics.IgnoreCollision(collider, _vectorField2d.gameObject.GetComponent<Collider>());
-        }
-        
+
         _simController.ResetSimulation();
         
         if(_charges.Count == maxChargeCount) onMaxChargesReached.Invoke();
+    }
+
+    public bool ContainsParticle(CoulombChargeBehaviour coulombCharge)
+    {
+        return _charges.Contains(coulombCharge);
     }
 
     public void RemoveParticle(CoulombChargeBehaviour coulombCharge, bool destroy = false)
@@ -231,9 +240,13 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         scene2D.SetActive(!_in3dMode);
         scene3D.SetActive(_in3dMode);
 
-        Camera.main.transform.position = _in3dMode ? new Vector3(0, 30f, -59.52f) : new Vector3(0, 4.4f, -59.52f);
-        Camera.main.transform.rotation = _in3dMode ? new Quaternion(0.25f, 0f, 0f, 1f) : new Quaternion(0f, 0f, 0f, 0f);
-
+        var mainCam = Camera.main;
+        if (mainCam)
+        {
+            mainCam.transform.position = _in3dMode ? new Vector3(0, 30f, -59.52f) : new Vector3(0, 4.4f, -59.52f);
+            mainCam.transform.rotation = _in3dMode ? new Quaternion(0.25f, 0f, 0f, 1f) : new Quaternion(0f, 0f, 0f, 0f);
+        }
+        
         _vectorField3d.setVectorFieldVisible(_in3dMode);
         _vectorField2d.setVectorFieldVisible(!_in3dMode);
     }

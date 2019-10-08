@@ -81,6 +81,16 @@
             <English>Voltmeter</English>
             <German>Voltmeter</German>
         </Translation>
+
+        <Translation Key="PLAY">
+            <English>PLAY Simulation</English>
+            <German>Simulation starten</German>
+        </Translation>
+
+        <Translation Key="RESET">
+            <English>RESET Simulation</English>
+            <German>Simulation zurücksetzen</German>
+        </Translation>
         
     </Translations>
 </LanguageManager>

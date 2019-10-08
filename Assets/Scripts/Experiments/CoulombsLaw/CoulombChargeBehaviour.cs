@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
+public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, IDeleteObject
 {
     [Header("Design Parameters and Variables")]
     public GameObject particleBase;
@@ -53,7 +53,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
     private void Update()
     {
         //TODO: PC Only?
-//        _rigidbody.isKinematic = !_simController.SimulationRunning || fixedPosition;
+        _rigidbody.isKinematic = !_simController.SimulationRunning || fixedPosition;
     }
 
     private void ChangeParticleType()
@@ -182,5 +182,9 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
         UpdateResetPosition();
         _simController.ResetSimulation();
     }
-    
+
+    public void OnDeleteObject()
+    {
+        _coulombLogic.RemoveParticle(this, true);
+    }
 }

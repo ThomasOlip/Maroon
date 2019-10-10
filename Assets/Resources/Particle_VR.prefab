@@ -216,6 +216,7 @@ MonoBehaviour:
   fixedPosition: 0
   pauseSimulationWhileMoving: 1
   deleteIfOutsideBoundaries: 1
+  _inUse: 0
 --- !u!54 &222567040141845093
 Rigidbody:
   m_ObjectHideFlags: 0

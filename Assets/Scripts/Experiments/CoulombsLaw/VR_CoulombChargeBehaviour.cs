@@ -1,10 +1,9 @@
 ﻿using System;
-using UnityEditor.Experimental.UIElements.GraphView;
+using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
-using VRTK.Controllables;
 
-public class VR_CoulombChargeBehaviour : MonoBehaviour
+public class VR_CoulombChargeBehaviour : MonoBehaviour, IResetWholeObject
 {
     public VRTK_SnapDropZone CorrespondingSnapDropZone;
     
@@ -22,6 +21,8 @@ public class VR_CoulombChargeBehaviour : MonoBehaviour
     private bool _fixedPos = false;
     private bool _checkOldSnapped = false;
     private GameObject _oldSnapped;
+
+    private List<GameObject> _resetObjList = new List<GameObject>();
     
     private void Start()
     {
@@ -38,20 +39,10 @@ public class VR_CoulombChargeBehaviour : MonoBehaviour
     }
 
 
-    public void SetPositiveCharge(object o, Control3DEventArgs e)
+    public void SetChargeValue(object o, Control3DEventArgs e)
     {
         _hasUpdatedCharge = false;
         _updateValue = e.value;
-       
-        UpdateCharge();
-    }
-
-    public void SetNegativeCharge(object o, Control3DEventArgs e)
-    {
-        _hasUpdatedCharge = false;
-        _updateValue = -e.value;
-        
-        Debug.Log("Set Neg: " + _updateValue);
        
         UpdateCharge();
     }
@@ -96,14 +87,43 @@ public class VR_CoulombChargeBehaviour : MonoBehaviour
         _hasUpdatedCharge = false;
         _hasUpdatedFixed = false;
         _checkOldSnapped = true;
+
+        var obj = _oldSnapped;
+        if(obj)
+        {
+            obj.GetComponent<CoulombChargeBehaviour>().SetInUse(false);
+            Debug.Log("New Object: " + obj.name);
+
+            _resetObjList.Add(obj);
+        }
+        
         UpdateCharge();
         UpdateFixedPosition();
     }
-    
+
     public void SetFixedPosition(object o, Control3DEventArgs e)
     {
         _hasUpdatedFixed = false;
         _fixedPos = e.value > 0.5f;
         UpdateFixedPosition();
+    }
+
+    public void ResetObject()
+    {
+        //do nothing
+    }
+
+    public void ResetWholeObject()
+    {
+        foreach (var charge in _resetObjList)
+        {
+            if(!charge) continue;
+            
+            var chargeBeh = charge.GetComponent<CoulombChargeBehaviour>();
+            if (chargeBeh && !chargeBeh.IsInUse())
+            {
+                Destroy(charge);
+            }
+        }
     }
 }

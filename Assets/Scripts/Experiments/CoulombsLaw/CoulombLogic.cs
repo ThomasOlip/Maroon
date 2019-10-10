@@ -184,6 +184,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _simController.AddNewResetObjectAtBegin(coulombCharge);
         _charges.Add(coulombCharge);
         _chargesGameObjects.Add(coulombCharge.gameObject);
+        coulombCharge.SetInUse(true);
 
         if (deactivateCollisions)
         {
@@ -215,6 +216,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _simController.RemoveResetObject(coulombCharge);
         _charges.Remove(coulombCharge);
         _chargesGameObjects.Remove(coulombCharge.gameObject);
+        coulombCharge.SetInUse(false);
 
         if (destroy)
         {
@@ -226,9 +228,9 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     }
 
 
-    public void OnSwitch3d2dMode(float newMode)
+    public void OnSwitch3d2dMode(float newMode, bool changeCamera = true)
     {
-        _in3dMode = !(newMode < 0.5);
+        _in3dMode = (newMode > 0.5);
         onModeChange.Invoke(_in3dMode);
         
         _simController.SimulationRunning = false;
@@ -240,13 +242,17 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         scene2D.SetActive(!_in3dMode);
         scene3D.SetActive(_in3dMode);
 
-        var mainCam = Camera.main;
-        if (mainCam)
+        if (changeCamera)
         {
-            mainCam.transform.position = _in3dMode ? new Vector3(0, 30f, -59.52f) : new Vector3(0, 4.4f, -59.52f);
-            mainCam.transform.rotation = _in3dMode ? new Quaternion(0.25f, 0f, 0f, 1f) : new Quaternion(0f, 0f, 0f, 0f);
+            var mainCam = Camera.main;
+            if (mainCam)
+            {
+                mainCam.transform.position = _in3dMode ? new Vector3(0, 30f, -59.52f) : new Vector3(0, 4.4f, -59.52f);
+                mainCam.transform.rotation =
+                    _in3dMode ? new Quaternion(0.25f, 0f, 0f, 1f) : new Quaternion(0f, 0f, 0f, 0f);
+            }
         }
-        
+
         _vectorField3d.setVectorFieldVisible(_in3dMode);
         _vectorField2d.setVectorFieldVisible(!_in3dMode);
     }

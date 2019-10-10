@@ -27,6 +27,8 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     private Rigidbody _rigidbody;
     private int _collided = 0;
 
+    public bool _inUse = false;
+
     private CoulombLogic _coulombLogic;
     private SimulationController _simController;
     
@@ -53,9 +55,31 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     private void Update()
     {
         //TODO: PC Only?
-        _rigidbody.isKinematic = !_simController.SimulationRunning || fixedPosition;
+        if(_inUse)
+            _rigidbody.isKinematic = !_simController.SimulationRunning || fixedPosition;
     }
 
+    public void SetInUse(bool inUse)
+    {
+        _inUse = inUse;
+        //TODO: check if needed in PC version? or if it creates a bug there
+        _rigidbody.useGravity = !inUse;
+
+        _rigidbody.constraints =
+            inUse
+                ? RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY |
+                  RigidbodyConstraints.FreezeRotationZ
+                : RigidbodyConstraints.None;
+        
+        if(!_inUse)
+            _rigidbody.isKinematic = false;
+    }
+
+    public bool IsInUse()
+    {
+        return _inUse;
+    }
+    
     private void ChangeParticleType()
     {
         var mat = particleBase.GetComponent<MeshRenderer>().materials;

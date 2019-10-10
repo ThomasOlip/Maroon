@@ -48,12 +48,14 @@ public class VRButtonController : VRTK_InteractableObject
 
         Debug.Log("Iron Filling Button pressed, start Iron Filling");
 
-        invokeObject.SetActive(true);
+        if(invokeObject)
+            invokeObject.SetActive(true);
 
         if(isToggleButton)
         {
             toggleValue = !toggleValue;
-            invokeObject.SendMessage(methodName, toggleValue);
+            if(invokeObject)
+                invokeObject.SendMessage(methodName, toggleValue);
 
             if (toggleValue)
             {
@@ -66,7 +68,8 @@ public class VRButtonController : VRTK_InteractableObject
         }
         else
         {
-            invokeObject.SendMessage(methodName);
+            if(invokeObject)
+                invokeObject.SendMessage(methodName);
         }
            
     }

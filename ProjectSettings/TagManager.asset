@@ -43,8 +43,8 @@ TagManager:
   - Charge
   - Cable
   - JustMouseCollision
-  - 
-  - 
+  - ChargeInUse
+  - JustCollideWithChargeInUse
   - 
   - 
   - 

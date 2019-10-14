@@ -37,16 +37,21 @@ public class VR_CoulombAddOnCollision : MonoBehaviour
                 {
                     coulombBehavior = interactObj.GetComponent<CoulombChargeBehaviour>();
                     if (!_coulombLogic.ContainsParticle(coulombBehavior)) return;
-                    var pos = other.transform.position;
-                    if (MatchXCoord)
-                        pos.x = ReferencePosition.position.x;
-                    if (MatchYCoord)
-                        pos.y = ReferencePosition.position.y;
-                    if (MatchZCoord)
-                        pos.z = ReferencePosition.position.z;
 
-                    other.transform.rotation = ReferencePosition.rotation;
-                    other.transform.position = pos;
+                    if (ReferencePosition != null)
+                    {
+                        var pos = other.transform.position;
+                        if (MatchXCoord)
+                            pos.x = ReferencePosition.position.x;
+                        if (MatchYCoord)
+                            pos.y = ReferencePosition.position.y;
+                        if (MatchZCoord)
+                            pos.z = ReferencePosition.position.z;
+
+                        other.transform.rotation = ReferencePosition.rotation;
+                        other.transform.position = pos;
+                    }
+
                     coulombBehavior.UpdateResetPosition();
                 };
             }

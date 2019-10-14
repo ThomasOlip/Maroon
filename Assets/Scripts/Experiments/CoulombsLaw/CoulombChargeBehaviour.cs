@@ -18,6 +18,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     [Header("Movement Settings")]
     public bool pauseSimulationWhileMoving = true;
     public bool deleteIfOutsideBoundaries = true;
+    public int inUseLayer = -1;
     
     private int _currentCharge = -1; // -1 = electron, 0 = neutron, 1 = proton -> needed to adapt the material during runtime
 //    private bool _inUse = false;
@@ -31,12 +32,14 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
 
     private CoulombLogic _coulombLogic;
     private SimulationController _simController;
+    private int _layer;
     
     private static readonly float CoulombConstant = 9f * Mathf.Pow(10f, 9f); // 1f / (Mathf.PI * 8.8542e-12f);
 
     // Start is called before the first frame update
     void Start()
     {
+        _layer = gameObject.layer;
         _rigidbody = GetComponent<Rigidbody>();
         _currentCharge = charge < 0 ? -1 : charge > 0 ? 1 : 0;
         ChangeParticleType();
@@ -64,12 +67,22 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
         _inUse = inUse;
         //TODO: check if needed in PC version? or if it creates a bug there
         _rigidbody.useGravity = !inUse;
+        
+        Debug.Log("Set In USE: " + inUse);
 
         _rigidbody.constraints =
             inUse
                 ? RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY |
                   RigidbodyConstraints.FreezeRotationZ
                 : RigidbodyConstraints.None;
+
+        if (inUseLayer != -1)
+        {
+            if (inUse)
+                gameObject.layer = inUseLayer;
+            else
+                gameObject.layer = _layer;
+        }
         
         if(!_inUse)
             _rigidbody.isKinematic = false;

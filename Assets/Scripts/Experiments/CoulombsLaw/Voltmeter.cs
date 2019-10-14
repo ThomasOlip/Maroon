@@ -8,25 +8,40 @@ public class VoltmeterEvent : UnityEvent<string> {}
 public class Voltmeter : MonoBehaviour, IResetWholeObject
 {
     public IField field;
+    public bool ResetToOriginalPosition = false;
+    public bool CanSwitchOff = false;
+    public Transform SensorPosition = null;
+    
     public VoltmeterEvent onVoltageChanged;
     
     private CoulombLogic _coulombLogic;
+    private Quaternion _originalRotation;
+    private Vector3 _originalPosition;
+    private bool _isOff = false;
     
     // Start is called before the first frame update
     void Start()
     {
+        if (SensorPosition == null)
+            SensorPosition = transform;
+        
         var simControllerObject = GameObject.Find("CoulombLogic");
         if (simControllerObject)
             _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
         Debug.Assert(_coulombLogic != null);
 
         onVoltageChanged.Invoke("---");
+
+        _originalRotation = transform.rotation;
+        _originalPosition = transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
-        var currentPos = transform.position;
+        if (_isOff) return;
+        
+        var currentPos = SensorPosition.position;
         if (!gameObject.activeInHierarchy) return;
         
         var potential = field.getStrength(currentPos) * Mathf.Pow(10f, -5f);
@@ -75,6 +90,24 @@ public class Voltmeter : MonoBehaviour, IResetWholeObject
         movArrows.gameObject.SetActive(true);
     }
 
+    public void TurnOn()
+    {
+        if (CanSwitchOff)
+        {
+            _isOff = false;
+        }
+    }
+
+    public void TurnOff()
+    {
+        if (CanSwitchOff)
+        {
+            _isOff = true;
+            onVoltageChanged.Invoke("---");
+        }
+    }
+    
+
     public void ResetObject()
     {
         
@@ -82,7 +115,13 @@ public class Voltmeter : MonoBehaviour, IResetWholeObject
 
     public void ResetWholeObject()
     {
-        gameObject.SetActive(false);
+        if (ResetToOriginalPosition)
+        {
+            transform.position = _originalPosition;
+            transform.rotation = _originalRotation;
+        }
+        else
+            gameObject.SetActive(false);
     }
 
     public void HideObject()
